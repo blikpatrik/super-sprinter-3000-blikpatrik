@@ -1,0 +1,13 @@
+MANIFEST.in
+supersprinter/__init__.py
+supersprinter/database.py
+supersprinter/models.py
+supersprinter/supersprinter.py
+supersprinter.egg-info/PKG-INFO
+supersprinter.egg-info/SOURCES.txt
+supersprinter.egg-info/dependency_links.txt
+supersprinter.egg-info/requires.txt
+supersprinter.egg-info/top_level.txt
+supersprinter/static/paper.jpg
+supersprinter/templates/form.html
+supersprinter/templates/list.html

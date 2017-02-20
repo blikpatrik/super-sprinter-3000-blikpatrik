@@ -1,0 +1,4 @@
+graft supersprinter/templates
+graft supersprinter/static
+include supersprinter/models.py
+include supersprinter/database.py
