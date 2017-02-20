@@ -1,0 +1,24 @@
+<!doctype html>
+<html><head><title>SuperSprinter3K</title></head>
+<body background="../static/paper.jpg" style="font-family:courier">
+<h1>RELOAD SCRUM</h1>
+<table>
+<thead><tr>
+{% for field in stories[0].__dict__['_data'] %}
+<th>{{field}}</th>
+{%endfor%}</tr></thead>
+<tbody>
+{% for story in stories %}
+<tr>
+<td>{{story.id}}</td>
+<td>{{story.title}}</td>
+<td>{{story.text}}</td>
+<td>{{story.criteria}}</td>
+<td>{{story.value}}</td>
+<td>{{story.estimation}}</td>
+<td>{{story.status}}</td>
+<td><form action="/story/{{story.id}}"><input type="image" src="../static/pencil.png" height="20" alt="Edit"/></form></td>
+<td><form action="/delete/{{story.id}}" method=post><input type="image" src="../static/bin.png" height="20" alt="Delete"></form></td></tr>
+{%endfor%}</tbody></table>
+<form action="{{url_for('form')}}">
+<input type="submit" value="Create"/></form></body></html>
