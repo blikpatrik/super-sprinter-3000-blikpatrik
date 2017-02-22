@@ -3,47 +3,51 @@ from database import Database
 from models import *
 
 app=Flask(__name__,template_folder="templates")
+fields=list(Story._meta.fields.keys())
+states=["planning","todo","in_progress","review","complete"]
+
+def createtables():
+  Database.database.drop_tables([Story],safe=True)
+  Database.database.create_tables([Story],safe=True)
+
 @app.route('/')
 @app.route('/list',methods=['GET'])
-def storyteller():
-    stories=Story.select().order_by(Story.id)
-    return render_template('list.html', stories=stories)
-@app.route('/story/', methods=['POST'])
-def add_story():
-    update=Story.create(title=request.form['title'],
-                             text=request.form['text'],
-                             criteria=request.form['criteria'],
-                             value=request.form['value'],
-                             estimation=request.form['estimation'],
-                             status=request.form['status'])
-    update.save()
-    return redirect(url_for('storyteller'))
-@app.route('/story/<story_id>', methods=['POST'])
-def edit_story(story_id):
-    edits=Story.update(title==request.form['title'],
-                       text=request.form['text'],
-                       criteria=request.form['criteria'],
-                       value=request.form['value'],
-                       estimation=request.form['estimation'],
-                       status=request.form['status']).where(Story.id==story_id)
-    edits.execute()
-    return redirect(url_for('storyteller'))
-@app.route('/delete/<story_id>',methods=['POST'])
-def delete_story(story_id):
-    story=Story.select().where(Story.id==story_id).get()
-    story.delete_instance()
-    story.save()
-    return redirect(url_for('storyteller'))
-@app.route("/form",methods=["GET","POST"])
-def form():
-    story=[]
-    return render_template("form.html",story=story,header="Create story",button="Create")
-@app.route("/story/<story_id>",methods=["GET"])
-def edit(story_id):
-    story=Story.get(Story.id==story_id)
-    return render_template("form.html",story=story,header="Edit story",button="Update")
+def storytable():
+  records=Story.select()
+  return render_template('list.html',records=records,fields=fields)
+
+@app.route("/story",methods=["GET"])
+def create_story():
+  header="Create Story"
+  return render_template("form.html",header=header,fields=fields,states=states,button="Create")
+
+@app.route('/story',methods=['POST'])
+def record_story():
+  record=Story.create()
+  for field in fields:
+    setattr(record,field,request.form[field])
+  return redirect(url_for('storytable'))
+
+@app.route("/story/<record_id>",methods=["GET"])
+def edit_story(record_id):
+  header="Edit story"
+  record=Story.get(Story.id==record_id)
+  return render_template("form.html",header=header,fields=fields,record=record,states=states,button="Update")
+
+@app.route('/story/<record_id>',methods=['POST'])
+def update_story(record_id):
+  record=Story.select().where(Story.id==record_id).get()
+  for field in fields:
+    setattr(record,field,request.form[field])
+  return redirect(url_for('storytable'))
+
+@app.route('/delete/<record_id>',methods=['GET'])
+def delete_story(record_id):
+  record=Story.select().where(Story.id==record_id).get()
+  record.delete_instance()
+  return redirect(url_for('storytable'))
 
 if __name__=='__main__':
-    CreateTables.createtables()
-    app.run(debug=True)
+  createtables()
+  app.run(debug=True)
 
